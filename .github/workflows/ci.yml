@@ -20,6 +20,8 @@ jobs:
 
   dependabot:
     name: 'Dependabot'
+    permissions:
+      pull-requests: write
     needs: test
     runs-on: ubuntu-latest
     if: ${{ github.actor == 'dependabot[bot]' && github.event_name == 'pull_request'}}
@@ -36,7 +38,7 @@ jobs:
           gh pr merge --auto --merge "$PR_URL"
         env:
           PR_URL: ${{github.event.pull_request.html_url}}
-          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Auto-approve Dependabot PRs for semver-minor updates
         if: ${{steps.metadata.outputs.update-type == 'version-update:semver-minor'}}
         run: |
@@ -44,17 +46,17 @@ jobs:
           gh pr review --approve "$PR_URL"
         env:
           PR_URL: ${{github.event.pull_request.html_url}}
-          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Auto-label Dependabot PRs for semver-major updates
         if: ${{steps.metadata.outputs.update-type == 'version-update:semver-major'}}
         run: gh pr edit "$PR_URL" --add-label "security-update"
         env:
           PR_URL: ${{github.event.pull_request.html_url}}
-          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Auto-label Dependabot PRs for unknown updates
         if: ${{steps.metadata.outputs.update-type == 'null'}}
         run: gh pr edit "$PR_URL" --add-label "security-update"
         env:
           PR_URL: ${{github.event.pull_request.html_url}}
-          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
