@@ -35,6 +35,7 @@ jobs:
         if: ${{steps.metadata.outputs.update-type == 'version-update:semver-patch'}}
         run: |
           gh pr edit "$PR_URL" --add-label "security-update"
+          gh pr comment "$PR_URL" --body "This is a semver-patch version update. It will be auto-merged."
           gh pr merge --auto --merge "$PR_URL"
         env:
           PR_URL: ${{github.event.pull_request.html_url}}
@@ -43,19 +44,24 @@ jobs:
         if: ${{steps.metadata.outputs.update-type == 'version-update:semver-minor'}}
         run: |
           gh pr edit "$PR_URL" --add-label "security-update"
+          gh pr comment "$PR_URL" --body "This is a semver-minor version update."
           gh pr review --approve "$PR_URL"
         env:
           PR_URL: ${{github.event.pull_request.html_url}}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Auto-label Dependabot PRs for semver-major updates
         if: ${{steps.metadata.outputs.update-type == 'version-update:semver-major'}}
-        run: gh pr edit "$PR_URL" --add-label "security-update"
+        run: |
+          gh pr edit "$PR_URL" --add-label "security-update"
+          gh pr comment "$PR_URL" --body "This is a semver-major version update. Please review the changes manually! :)"
         env:
           PR_URL: ${{github.event.pull_request.html_url}}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Auto-label Dependabot PRs for unknown updates
         if: ${{steps.metadata.outputs.update-type == 'null'}}
-        run: gh pr edit "$PR_URL" --add-label "security-update"
+        run: |
+          gh pr edit "$PR_URL" --add-label "security-update"
+          gh pr comment "$PR_URL" --body "This is an unknown version update. Please review the changes manually! :)"
         env:
           PR_URL: ${{github.event.pull_request.html_url}}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
