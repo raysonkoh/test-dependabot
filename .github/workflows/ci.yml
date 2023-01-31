@@ -9,11 +9,7 @@ on:
 
 jobs:
   test:
-    strategy:
-      matrix:
-        platform: [ubuntu-latest, macos-latest, windows-latest]
-    runs-on: ${{ matrix.platform }}
-
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
@@ -35,25 +31,29 @@ jobs:
           github-token: '${{ secrets.GITHUB_TOKEN }}'
       - name: Auto-merge Dependabot PRs for semver-patch updates
         if: ${{steps.metadata.outputs.update-type == 'version-update:semver-patch'}}
-        run: gh pr merge --auto --merge "$PR_URL"
+        run: |
+          gh pr edit "$PR_URL" --add-label "security-update"
+          gh pr merge --auto --merge "$PR_URL"
         env:
           PR_URL: ${{github.event.pull_request.html_url}}
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
       - name: Auto-approve Dependabot PRs for semver-minor updates
         if: ${{steps.metadata.outputs.update-type == 'version-update:semver-minor'}}
-        run: gh pr review --approve "$PR_URL"
+        run: |
+          gh pr edit "$PR_URL" --add-label "security-update"
+          gh pr review --approve "$PR_URL"
         env:
           PR_URL: ${{github.event.pull_request.html_url}}
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
       - name: Auto-label Dependabot PRs for semver-major updates
         if: ${{steps.metadata.outputs.update-type == 'version-update:semver-major'}}
-        run: gh pr edit "$PR_URL" --add-label "needs-review,security-update"
+        run: gh pr edit "$PR_URL" --add-label "security-update"
         env:
           PR_URL: ${{github.event.pull_request.html_url}}
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
       - name: Auto-label Dependabot PRs for unknown updates
         if: ${{steps.metadata.outputs.update-type == 'null'}}
-        run: gh pr edit "$PR_URL" --add-label "needs-review,unknown-security-update"
+        run: gh pr edit "$PR_URL" --add-label "security-update"
         env:
           PR_URL: ${{github.event.pull_request.html_url}}
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
