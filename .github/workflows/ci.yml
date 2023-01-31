@@ -37,6 +37,7 @@ jobs:
         run: |
           gh pr edit "$PR_URL" --add-label "security-update"
           gh pr comment "$PR_URL" --body "This is a semver-patch version update. It will be auto-merged."
+          gh pr review --approve "$PR_URL"
           gh pr merge --auto --merge "$PR_URL"
         env:
           PR_URL: ${{github.event.pull_request.html_url}}
