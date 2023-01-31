@@ -20,8 +20,6 @@ jobs:
 
   dependabot:
     name: 'Dependabot'
-    permissions:
-      pull-requests: write
     needs: test
     runs-on: ubuntu-latest
     if: ${{ github.actor == 'dependabot[bot]' && github.event_name == 'pull_request'}}
