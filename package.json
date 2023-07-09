@@ -3,7 +3,7 @@
     "setup": "npm ci && lerna clean --yes && lerna bootstrap --hoist"
   },
   "devDependencies": {
-    "lerna": "^4.0.0"
+    "lerna": "^7.1.1"
   },
   "name": "test-dependabot"
 }
